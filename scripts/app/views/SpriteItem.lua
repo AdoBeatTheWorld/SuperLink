@@ -7,7 +7,6 @@ function SpriteItem:ctor()
 end
 
 function SpriteItem:setData(value)
-	printInfo("Set Data %d",value)
 	if self.type ~= value then
 		self.type = value
 		self:initIcon()
@@ -34,7 +33,6 @@ function SpriteItem:setPos( px,py )
 	self.px = px
 	self.py = py
 	self:setPosition(px*50+startX, py*50+startY)
-	printInfo("x:%d,y:%d", self:getPositionX(),self:getPositionY())
 end
 
 function SpriteItem:getPos()
