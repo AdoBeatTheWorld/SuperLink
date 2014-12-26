@@ -4,16 +4,30 @@ local MainScene = class("MainScene", function()
 end)
 local SpriteItem = import("app/views/SpriteItem")
 function MainScene:ctor()
-    ui.newTTFLabel({text = "Hello, World", size = 64, align = ui.TEXT_ALIGN_CENTER})
-        :pos(display.cx, display.cy)
-        :addTo(self)
+
+    self.scorelb = ui.newTTFLabel({text = "Score : 0", size = 30, align = ui.TEXT_ALIGN_LEFT})
+			        :pos(display.width-150, display.height-40)
+			        :addTo(self)
+
+    self.timelb = ui.newTTFLabel({text = "Time  : 0", size = 30, align = ui.TEXT_ALIGN_LEFT})
+				    :pos(display.width-150, display.height-80)
+				    :addTo(self)
+
+	self.items = {}
 end
 
 function MainScene:onEnter()
-	local item = SpriteItem.new()
-	item:setData(0)
-	item:setPos(2,2)
-	item:addTo(self)
+	local item
+	local row = 8
+	for i=1,64 do
+		item = SpriteItem.new()
+		item:setData(math.floor(math.random(0,10)))
+		item:addTo(self)
+		self.items[i] = item
+		item:setPos(math.floor((i-1)%row),math.floor((i-1)/row))
+		printInfo("item %d pos : %d, %d", i, item:getPos())
+	end
+	
 end
 
 function MainScene:onExit()
