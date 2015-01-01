@@ -13,6 +13,16 @@ function SpriteItem:setData(value)
 	end
 end
 
+function SpriteItem:setName( name )
+	-- body
+	self.name = name
+end
+
+function SpriteItem:getName(  )
+	-- body
+	return self.name
+end
+
 function SpriteItem:initIcon()
 	self.icon = display.newSprite(string.format("res/%d.png", self.type)):addTo(self)
 end
@@ -33,6 +43,7 @@ function SpriteItem:setPos( px,py )
 	self.px = px
 	self.py = py
 	self:setPosition(px*50+startX, py*50+startY)
+	--printInfo("Recoordinate %d : %d, pos==== %d : %d", self:getPositionX(),self:getPositionY(),px,py)
 end
 
 function SpriteItem:getPos()

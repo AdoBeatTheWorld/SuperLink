@@ -30,19 +30,34 @@ end
 
 function MainScene:onEnter()
 	local item
-	for i=1,64 do
+	local item0
+	local temptype = 1
+	for i=1,32 do
+		temptype = math.floor(math.random(0,10))
 		item = SpriteItem.new()
-		item:setData(math.floor(math.random(0,10)))
+		item:setData(temptype)
 		item:addTo(self.layer)
+		item:setName(string.format("item%d", i))
 		self.items[i] = item
 		item:setPos(math.floor((i-1)%row),math.floor((i-1)/row))
+
+		item0 = SpriteItem.new()
+		item0:setData(temptype)
+		item0:addTo(self.layer)
+		self.items[i+32] = item0
+		item0:setName(string.format("item%d", i+32))
+		item0:setPos(math.floor((i+31)%row),math.floor((i+31)/row))
 	end
+
+	self:shuffle(self.items)
+
 	self.layer:addNodeEventListener(cc.NODE_TOUCH_EVENT, handler(self, self.onTouched))
 	self.layer:setTouchEnabled(true)
 end
 
 function MainScene:onTouched(event)
 	local tx,ty = event.x, event.y
+	print("onTouche", tx, ty)
 	local item = self:getItem(tx,ty)
 	if item == nil then
 		return
@@ -80,11 +95,16 @@ function MainScene:onTouched(event)
 end
 
 function MainScene:getItem( posx, posy )
+	--printInfo("getItem %d : %d", posx, posy)
+	
 	local px = math.round((posx - startX)/50)
 	local py = math.round((posy-startY)/50)
+	if px > 8 or py > 8 then
+		return
+	end
 	local index = row * py + px + 1
 	local item = self.items[index]
-	printInfo("posx:%d, posy:%d, x:%d, y:%d index:%d", posx, posy, px, py)
+	
 	return item
 end
 
@@ -105,6 +125,25 @@ function MainScene:getPath(path, sx,sy,tx,ty,cdir,ct, ci)
 	end
 
 	return path
+end
+
+function MainScene:shuffle(t)
+	local  len = #t
+	for i=1,len*2 do
+		local a = math.floor(math.random(len))
+		local b = math.floor(math.random(len))
+		
+		if a ~= b then
+			t[a],t[b] = t[b],t[a]
+			t[a]:setPos(math.floor((a-1)%row),math.floor((a-1)/row))
+			t[b]:setPos(math.floor((b-1)%row),math.floor((b-1)/row))
+			--printInfo("swap item %d : %d", a,b)
+		end
+	end
+	--[[i = 1
+	for i=1,len do
+		print(t[i]:getName())
+	end]]
 end
 
 function MainScene:onExit()
