@@ -14,7 +14,7 @@ function SpriteItem:setData(value)
 end
 
 function SpriteItem:initIcon()
-	display.newSprite(string.format("res/%d.png", self.type)):addTo(self)
+	self.icon = display.newSprite(string.format("res/%d.png", self.type)):addTo(self)
 end
 
 function SpriteItem:recycle()
