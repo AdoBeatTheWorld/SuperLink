@@ -8,10 +8,11 @@ local  startX,startY = 50,50
 local row = 8
 
 MainScene._GrayFilter = {"GRAY",{0.2, 0.3, 0.5, 0.1}}
+MainScene._DIRECTIONS = {1,2,8,16}
 MainScene.RIGHT = 1
 MainScene.DOWN = 2
 MainScene.LEFT = 8
-MainScene.RIGHT = 16
+MainScene.UP = 16
 
 function MainScene:ctor()
 	self.layer = display.newLayer():addTo(self)
@@ -26,9 +27,12 @@ function MainScene:ctor()
 	self.selectedIcon = display.newSprite("res/selected.png"):addTo(self.layer)
 	self.selectedIcon:setVisible(false)
 	self.items = {}
+	self.openlist = {}
+	self.closelist = {}
 end
 
 function MainScene:onEnter()
+	print(#MainScene._DIRECTIONS)
 	local item
 	local item0
 	local temptype = 1
@@ -69,16 +73,16 @@ function MainScene:onTouched(event)
 			local tx,ty = item:getPos()
 
 			local path = {{0,sx,sy}}
-			self:getPath(sx, sy, tx, ty, MainScene.RIGHT, 0)
-			if path == nil then
-				self:getPath(path, sx, sy, tx, ty, MainScene.DOWN, 0)
+			self.openlist = {}
+			self.closelist = {}
+			self.openlist[string.format("%d_%d", sx,sy)] = true
+			for i=1,#MainScene._DIRECTIONS do
+				path = self:getPath(path, sx, sy, tx, ty, MainScene._DIRECTIONS[i], 0)
+				if path ~= nil then
+					print("Path found")
+				end
 			end
-			if path == nil then
-				self:getPath(path, sx, sy, tx, ty, MainScene.LEFT, 0)
-			end
-			if path == nil then
-				self:getPath(path, sx, sy, tx, ty, MainScene.UP, 0)
-			end
+			
 			if path == nil then
 				self.selectedItem = item
 				self.selectedIcon:setPosition(item:getPosition())
@@ -94,13 +98,21 @@ function MainScene:onTouched(event)
 	end
 end
 
-function MainScene:getItem( posx, posy )
-	--printInfo("getItem %d : %d", posx, posy)
-	
+function MainScene:getItem( posx, posy )	
 	local px = math.round((posx - startX)/50)
 	local py = math.round((posy-startY)/50)
 	if px > 8 or py > 8 then
-		return
+		return nil
+	end
+	local index = row * py + px + 1
+	local item = self.items[index]
+	
+	return item
+end
+
+function MainScene:getItemByPos( px,py )
+	if px > 8 or py > 8 then
+		return nil
 	end
 	local index = row * py + px + 1
 	local item = self.items[index]
@@ -124,6 +136,22 @@ function MainScene:getPath(path, sx,sy,tx,ty,cdir,ct, ci)
 		sy = sy + 1
 	end
 
+	local  key = string.format("%d_%d", sx,sy)
+	if self.openlist[key] or self.closelist[key] then--not looped
+		return nil
+	end
+
+	if sx == tx and sy == ty then--found
+		path[1] = {ci,sx,sy} 
+		return path
+	end
+
+	next = self:getItemByPos(sx,sy)
+	if next == nil then
+		return self:getPath(path, sx, sy, tx, ty, cdir, ct, ci)--get next do not need change dir
+	elseif next ~= nil then-- need change dir
+		
+	end
 	return path
 end
 
