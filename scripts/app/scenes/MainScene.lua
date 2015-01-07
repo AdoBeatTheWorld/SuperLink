@@ -70,7 +70,21 @@ function MainScene:onTouched(event)
 		if self.selectedItem ~= item then
 			local sx,sy = self.selectedItem:getPos()
 			local tx,ty = item:getPos()
+			local canDirectLink = self:checkHasDirectLink(sx,sy,tx,ty)
+			if canDirectLink then
+				print("Can link directly")
+				return
+			end
+			local path = self:hasOneLink(sx,sy,tx,ty)
+			if path ~= nil then
+				print("Has one link...")
+			end
 
+			path = self:hasTwoLink(sx, sy, tx, ty)
+			if path ~= nil then
+				print("Has two link.....")
+			end
+			--[[
 			self.openlist = {}
 			self.closelist = {}
 			self.openlist[string.format("%d_%d", sx,sy)] = true
@@ -94,6 +108,7 @@ function MainScene:onTouched(event)
 				self.selectedItem = item
 				self.selectedIcon:setPosition(item:getPosition())
 			end
+			]]
 		else
 			self.selectedItem = nil
 			self.selectedIcon:setVisible(false)
@@ -193,19 +208,20 @@ function MainScene:checkHasDirectLink( sx,sy,tx,ty)
 		for i=sy,ty do
 			local next = self:getItemByPos(sx,i)
 			if next ~= nil and next:getPosY()[2] ~= ty  then
-				return nil
+				return false
 			end
 		end
 	elseif sy == ty then
 		for j=sx,tx do
 			next = self:getItemByPos(j,sy)
 			if next ~= nil and next:getPosX()[1] ~= tx  then
-				return nil
+				return false
 			end
 		end
 	else
-		return nil
+		return false
 	end
+	return true
 end
 
 function MainScene:hasOneLink( sx,sy,tx,ty )
@@ -243,7 +259,6 @@ function MainScene:hasOneLink( sx,sy,tx,ty )
 			next = self:getItemByPos(tx,l)
 			if next ~= nil then
 				return nil
-				break
 			end
 		end
 	end
@@ -253,7 +268,6 @@ function MainScene:hasOneLink( sx,sy,tx,ty )
 			next = self:getItemByPos(m,sy)
 			if next ~= nil then
 				return nil
-				break
 			end
 		end
 	end
@@ -271,7 +285,7 @@ function MainScene:getDirectPoints( sx,sy )
 	local canXUp = true
 	local canYUp = true
 	local canXDown = true
-	local canYDown = 1
+	local canYDown = true
 	local xdownlimit = sx + 1
 	local ydownlimit = sy + 1
 	local xuplimit = row - sx
@@ -329,8 +343,39 @@ function MainScene:getDirectPoints( sx,sy )
 			canYDown = false
 		end
 	end
-
+	--sort 
+	self:orderByQuick(result,1,#result)
 	return result
+end
+
+function MainScene:quickSort( list, low, high )
+	if low < high then
+		local referIndex = self:partition(list, low, high)
+		self:quickSort(list,low,referIndex - 1)
+		self:quickSort(list, referIndex+1,high)
+	end
+end
+
+function MainScene:partition( list, low, high )
+	local low = low
+	local high = high
+	local referValue = list[low][1]
+	while low < high do
+		while low < high and list[high][1] >= referValue do
+			high = high - 1
+		end
+		swap(list,low,high)
+
+		while low < high and list[low][1] <= referValue do
+			low = low + 1
+		end
+		swap(list,low,high)
+	end
+	return low
+end
+
+function MainScene:swap( list,i,j )
+	list[i],list[j] = list[j],list[i]
 end
 
 function MainScene:getTheShortest(value)
