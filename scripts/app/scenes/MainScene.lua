@@ -8,11 +8,11 @@ local  startX,startY = 50,50
 local row = 8
 
 MainScene._GrayFilter = {"GRAY",{0.2, 0.3, 0.5, 0.1}}
-MainScene._DIRECTIONS = {1,2,8,16}
+MainScene._DIRECTIONS = {1,2,3,4}
 MainScene.RIGHT = 1
 MainScene.DOWN = 2
-MainScene.LEFT = 8
-MainScene.UP = 16
+MainScene.LEFT = 3
+MainScene.UP = 4
 
 function MainScene:ctor()
 	self.layer = display.newLayer():addTo(self)
@@ -32,7 +32,6 @@ function MainScene:ctor()
 end
 
 function MainScene:onEnter()
-	print(#MainScene._DIRECTIONS)
 	local item
 	local item0
 	local temptype = 1
@@ -61,7 +60,7 @@ end
 
 function MainScene:onTouched(event)
 	local tx,ty = event.x, event.y
-	print("onTouche", tx, ty)
+	--print("onTouche", tx, ty)
 	local item = self:getItem(tx,ty)
 	if item == nil then
 		return
@@ -72,14 +71,22 @@ function MainScene:onTouched(event)
 			local sx,sy = self.selectedItem:getPos()
 			local tx,ty = item:getPos()
 
-			local path = {{0,sx,sy}}
 			self.openlist = {}
 			self.closelist = {}
 			self.openlist[string.format("%d_%d", sx,sy)] = true
+			printf("get path %d %d ===> %d %d", sx,sy,tx,ty)
 			for i=1,#MainScene._DIRECTIONS do
+				local path = {{sx,sy}}
+				printInfo("Main Loop dir:%d", MainScene._DIRECTIONS[i])
 				path = self:getPath(path, sx, sy, tx, ty, MainScene._DIRECTIONS[i], 0)
 				if path ~= nil then
 					print("Path found")
+					for i=1,#path do
+						printInfo("Path Node x:%d y:%d",path[i][1],path[i][2])
+					end
+					self.selectedItem = nil
+					item = nil
+					return
 				end
 			end
 			
@@ -120,11 +127,9 @@ function MainScene:getItemByPos( px,py )
 	return item
 end
 
-function MainScene:getNextItem( sx,sy,dir )
-	-- body
-end
 --path 当前已遍历数组 sx 当前item的x sy当前item的y tx目标x ty目标y cdir当前方向 ct当前转向次数
-function MainScene:getPath(path, sx,sy,tx,ty,cdir,ct, ci)
+function MainScene:getPath(path, sx,sy,tx,ty,cdir,ct)
+	
 	local next
 	if cdir == MainScene.RIGHT then
 		sx = sx + 1
@@ -135,24 +140,209 @@ function MainScene:getPath(path, sx,sy,tx,ty,cdir,ct, ci)
 	elseif cdir == MainScene.UP then
 		sy = sy + 1
 	end
-
-	local  key = string.format("%d_%d", sx,sy)
-	if self.openlist[key] or self.closelist[key] then--not looped
+	--out of range
+	if sx > row  or sx < -1 or sy > row or sy < -1 then
 		return nil
 	end
+	local  key = string.format("%d_%d", sx,sy)
+	if self.openlist[key] == true or self.closelist[key] == true then--has looped
+		return nil
+	end
+	self.closelist[key] = true
 
 	if sx == tx and sy == ty then--found
-		path[1] = {ci,sx,sy} 
+		printInfo("Finally Found")
+		path[#path+1] = {sx,sy} 
 		return path
 	end
 
 	next = self:getItemByPos(sx,sy)
+	local results = {}
 	if next == nil then
-		return self:getPath(path, sx, sy, tx, ty, cdir, ct, ci)--get next do not need change dir
+		for i=1,#MainScene._DIRECTIONS do
+			local tempdir = MainScene._DIRECTIONS[i]
+			printInfo("Sub loop current pos %d %d ,currrent dir:%d", sx,sy,tempdir)
+			if tempdir == cdir then
+				printInfo("Current Pos:%d %d Keep Loop",sx,sy)
+				path[#path+1] = {sx,sy} 
+				temppath = self:getPath(path, sx, sy, tx, ty, tempdir, ct)
+			else
+				if ct <= 2 then
+					printInfo("Keep Loop and change dir:%d path length:%d",tempdir,#path)
+					path[#path+1] = {sx,sy} 
+					temppath = self:getPath(path, sx, sy, tx, ty, tempdir, ct+1)
+				end
+			end
+			if temppath ~= nil then
+				results[#results] = temppath
+			end
+		end
+		if #results ~= 0 then
+			return getTheShortest(results)
+		else
+			return nil
+		end
 	elseif next ~= nil then-- need change dir
-		
+		return nil
 	end
-	return path
+	return nil
+end
+
+function MainScene:checkHasDirectLink( sx,sy,tx,ty)
+	if sx == tx then
+		for i=sy,ty do
+			local next = self:getItemByPos(sx,i)
+			if next ~= nil and next:getPosY()[2] ~= ty  then
+				return nil
+			end
+		end
+	elseif sy == ty then
+		for j=sx,tx do
+			next = self:getItemByPos(j,sy)
+			if next ~= nil and next:getPosX()[1] ~= tx  then
+				return nil
+			end
+		end
+	else
+		return nil
+	end
+end
+
+function MainScene:hasOneLink( sx,sy,tx,ty )
+	local next
+	local firstfail = false
+	for i=sx,tx do --{sx,ty} to {tx,ty}
+		if i ~= sx or i ~= tx then
+			next = self:getItemByPos(i,ty)
+			if next ~= nil then
+				firstfail = true
+				break
+			end
+		end
+	end
+	if firstfail ~= true then 
+		for j=ty,sy do --{sx,ty} to {sx,sy}
+			if j ~= ty or j ~= sy then
+				next = self:getItemByPos(sx,j)
+				if next ~= nil then
+					firstfail = true
+					break
+				end
+			end
+		end
+	end
+	
+
+	if firstfail == false then
+		return {sx,sy,sx,ty,tx,ty}
+	end
+	
+
+	for l=sy,ty do--{tx,sy} to {tx,ty}
+		if l ~= sy or l ~= ty then
+			next = self:getItemByPos(tx,l)
+			if next ~= nil then
+				return nil
+				break
+			end
+		end
+	end
+
+	for m=tx,sx do--{tx,sy} to {sx,sy}
+		if m ~= tx or m ~= sx then
+			next = self:getItemByPos(m,sy)
+			if next ~= nil then
+				return nil
+				break
+			end
+		end
+	end
+
+	return {sx,sy,sx,ty,tx,ty}
+end
+
+function MainScene:hasTwoLink( sx,sy,tx,ty )
+	local linkToSource = self:getDirectPoints(sx, sy)
+	local linkToTarget = self:getDirectPoints(tx, ty)
+end
+
+function MainScene:getDirectPoints( sx,sy )
+	local result = {}
+	local canXUp = true
+	local canYUp = true
+	local canXDown = true
+	local canYDown = 1
+	local xdownlimit = sx + 1
+	local ydownlimit = sy + 1
+	local xuplimit = row - sx
+	local yuplimit = row - sy
+	local uplimit = xuplimit > yuplimit and xuplimit or yuplimit
+	local downlimit = xdownlimit < ydownlimit and xdownlimit or ydownlimit
+	local next
+	local idx = 0
+	for i=downlimit,uplimit do
+		if canXUP and sx + i <= row then
+			next = self:getItemByPos(sx+i,sy)
+			if next == nil then
+				idx = idx + 1
+				result[idx] = {sx+i,sy}
+			else
+				canXUP = false
+			end
+		else
+			canXUP = false
+		end
+
+		if canYUp and sy+i <= row then
+			next = self:getItemByPos(sx,sy+i)
+			if next == nil then
+				idx = idx + 1
+				result[idx] = {sx,sy+i}
+			else
+				canYUp = false
+			end
+		else
+			canYUp = false
+		end
+
+		if canXDown and sx-i >= -1 then
+			next = self:getItemByPos(sx-i,sy)
+			if next == nil then
+				idx = idx + 1
+				result[idx] = {sx-i,sy}
+			else
+				canXDown = false
+			end
+		else
+			canXDown = false
+		end
+
+		if canYDown and sy-i >= -1 then
+			next = self:getItemByPos(sx,sy-i)
+			if next == nil then
+				idx = idx + 1
+				result[idx] = {sx,sy-i}
+			else
+				canYDown = false
+			end
+		else
+			canYDown = false
+		end
+	end
+
+	return result
+end
+
+function MainScene:getTheShortest(value)
+	local result
+	for i=1,#value do
+		if result == nil then
+			result = value[i]
+		else
+			result = #result > #value[i] and value[i] or result
+		end
+	end
+	return result
 end
 
 function MainScene:shuffle(t)
