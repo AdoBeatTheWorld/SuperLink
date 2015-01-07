@@ -50,4 +50,12 @@ function SpriteItem:getPos()
 	return self.px, self.py
 end
 
+function SpriteItem:getPosX( )
+	return self.px
+end
+
+function SpriteItem:getPosY( )
+	return self.py
+end
+
 return SpriteItem

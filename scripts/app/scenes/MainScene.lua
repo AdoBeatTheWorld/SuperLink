@@ -73,11 +73,19 @@ function MainScene:onTouched(event)
 			local canDirectLink = self:checkHasDirectLink(sx,sy,tx,ty)
 			if canDirectLink then
 				print("Can link directly")
+				self.selectedItem:removeSelf()
+				self.selectedItem = nil
+				item:removeSelf()
 				return
 			end
 			local path = self:hasOneLink(sx,sy,tx,ty)
 			if path ~= nil then
 				print("Has one link...")
+
+				self.selectedItem:removeSelf()
+				self.selectedItem = nil
+				item:removeSelf()
+				return
 			end
 
 			path = self:hasTwoLink(sx, sy, tx, ty)
@@ -207,14 +215,14 @@ function MainScene:checkHasDirectLink( sx,sy,tx,ty)
 	if sx == tx then
 		for i=sy,ty do
 			local next = self:getItemByPos(sx,i)
-			if next ~= nil and next:getPosY()[2] ~= ty  then
+			if next ~= nil and next:getPosY() ~= ty  then
 				return false
 			end
 		end
 	elseif sy == ty then
 		for j=sx,tx do
 			next = self:getItemByPos(j,sy)
-			if next ~= nil and next:getPosX()[1] ~= tx  then
+			if next ~= nil and next:getPosX() ~= tx  then
 				return false
 			end
 		end
