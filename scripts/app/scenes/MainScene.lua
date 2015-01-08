@@ -465,7 +465,7 @@ end
 
 function MainScene:shuffle(t)
 	local  len = #t
-	for i=1,len*2 do
+	for i=1,len*5 do
 		local a = math.floor(math.random(len))
 		local b = math.floor(math.random(len))
 		
@@ -476,10 +476,6 @@ function MainScene:shuffle(t)
 			--printInfo("swap item %d : %d", a,b)
 		end
 	end
-	--[[i = 1
-	for i=1,len do
-		print(t[i]:getName())
-	end]]
 end
 
 function MainScene:recycle( item )
