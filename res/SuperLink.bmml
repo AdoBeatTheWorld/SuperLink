@@ -1,4 +1,4 @@
-<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="1577" measuredH="717" mockupW="1523" mockupH="668">
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="982" measuredH="717" mockupW="928" mockupH="668">
   <controls>
     <control controlID="0" controlTypeID="com.balsamiq.mockups::iPhone" x="54" y="49" w="485" h="668" measuredW="282" measuredH="573" zOrder="0" locked="false" isInGroup="-1">
       <controlProperties>
@@ -45,35 +45,39 @@
     <control controlID="30" controlTypeID="com.balsamiq.mockups::Icon" x="369" y="447" w="-1" h="-1" measuredW="48" measuredH="48" zOrder="30" locked="false" isInGroup="-1"/>
     <control controlID="31" controlTypeID="com.balsamiq.mockups::Icon" x="369" y="499" w="-1" h="-1" measuredW="48" measuredH="48" zOrder="31" locked="false" isInGroup="-1"/>
     <control controlID="32" controlTypeID="com.balsamiq.mockups::Icon" x="369" y="558" w="-1" h="-1" measuredW="48" measuredH="48" zOrder="32" locked="false" isInGroup="-1"/>
-    <control controlID="33" controlTypeID="com.balsamiq.mockups::Icon" x="539" y="116" w="-1" h="-1" measuredW="48" measuredH="48" zOrder="33" locked="false" isInGroup="-1"/>
-    <control controlID="35" controlTypeID="com.balsamiq.mockups::TextArea" x="613" y="64" w="305" h="229" measuredW="200" measuredH="140" zOrder="34" locked="false" isInGroup="-1">
+    <control controlID="41" controlTypeID="com.balsamiq.mockups::iPhone" x="497" y="49" w="485" h="668" measuredW="282" measuredH="573" zOrder="33" locked="false" isInGroup="-1">
       <controlProperties>
-        <text>SpriteItem%20ext%20Node%0A%20%u8FDE%u8FDE%u770B%u5143%u7D20%u7C7B%0A*%20type%3Aint%20%u7C7B%u578B%0A*%20icon%3ASprite%20%u56FE%u6807%uFF0C%u7531%u7C7B%u578B%u5F71%u54CD%0A*%20px%3Aint%20%u6240%u5728%u884C%0A*%20py%3Aint%20%u6240%u5728%u5217%0A%20%0A%7E%20setPos%28px%2Cpy%29%20%u8BBE%u7F6E%u884C%u4E0E%u5217%0A%7E%20setData%28type%29%20%u8BBE%u7F6E%u7C7B%u578B%0A%7E%20initIcon%28%29%20%u521D%u59CB%u5316icon%0A%7EgetData%28%29%3Aint%20%u53D6%u5F97%u7C7B%u578B%0A%7E%20recycle%28%29%20%u56DE%u6536%0A%7E%20rest%28%29%20%20%u91CD%u8BBE</text>
+        <model>IPhone5</model>
       </controlProperties>
     </control>
-    <control controlID="36" controlTypeID="com.balsamiq.mockups::Label" x="539" y="373" w="-1" h="-1" measuredW="89" measuredH="21" zOrder="35" locked="false" isInGroup="-1">
+    <control controlID="42" controlTypeID="com.balsamiq.mockups::Button" x="670" y="254" w="107" h="46" measuredW="78" measuredH="27" zOrder="34" locked="false" isInGroup="-1">
       <controlProperties>
-        <text>SCORE%3A%2010000</text>
+        <size>14</size>
+        <text>%u6807%u51C6%u6A21%u5F0F</text>
       </controlProperties>
     </control>
-    <control controlID="37" controlTypeID="com.balsamiq.mockups::Label" x="539" y="501" w="-1" h="-1" measuredW="95" measuredH="21" zOrder="36" locked="false" isInGroup="-1">
+    <control controlID="43" controlTypeID="com.balsamiq.mockups::Button" x="670" y="309" w="107" h="46" measuredW="78" measuredH="27" zOrder="35" locked="false" isInGroup="-1">
       <controlProperties>
-        <text>TimeLeft%3A%2002%3A00</text>
+        <size>14</size>
+        <text>%u65E0%u5C3D%u6A21%u5F0F</text>
       </controlProperties>
     </control>
-    <control controlID="38" controlTypeID="com.balsamiq.mockups::TextArea" x="659" y="363" w="200" h="99" measuredW="200" measuredH="140" zOrder="37" locked="false" isInGroup="-1">
+    <control controlID="44" controlTypeID="com.balsamiq.mockups::Button" x="670" y="370" w="107" h="46" measuredW="78" measuredH="27" zOrder="36" locked="false" isInGroup="-1">
       <controlProperties>
-        <text>%u5F97%u5206%u60C5%u51B5</text>
+        <size>14</size>
+        <text>%u8BA1%u65F6%u6A21%u5F0F</text>
       </controlProperties>
     </control>
-    <control controlID="39" controlTypeID="com.balsamiq.mockups::TextArea" x="659" y="495" w="200" h="99" measuredW="200" measuredH="140" zOrder="38" locked="false" isInGroup="-1">
+    <control controlID="45" controlTypeID="com.balsamiq.mockups::Button" x="670" y="431" w="107" h="46" measuredW="64" measuredH="27" zOrder="37" locked="false" isInGroup="-1">
       <controlProperties>
-        <text>%u5012%u8BA1%u65F6</text>
+        <size>14</size>
+        <text>%u6392%u884C%u699C</text>
       </controlProperties>
     </control>
-    <control controlID="40" controlTypeID="com.balsamiq.mockups::TextArea" x="1006" y="56" w="571" h="354" measuredW="200" measuredH="140" zOrder="39" locked="false" isInGroup="-1">
+    <control controlID="46" controlTypeID="com.balsamiq.mockups::Button" x="670" y="486" w="107" h="46" measuredW="50" measuredH="27" zOrder="38" locked="false" isInGroup="-1">
       <controlProperties>
-        <text>*%20sx%20%u5F53%u524D%u6E90%u8DEF%u5F84x%0A*%20sy%20%u5F53%u524D%u6E90%u8DEF%u5F84y%0A*%20tx%20%20%u5F53%u524D%u76EE%u6807%u8DEF%u5F84x%0A*%20ty%20%20%u5F53%u524D%u76EE%u6807%u8DEF%u5F84y%0A*%20cdir%20%20%u5F53%u524D%u65B9%u5411%0A*%20ctime%20%20%u5F53%u524D%u8F6C%u5F2F%u6B21%u6570%0A*%20path%20%20%20%20%u5F53%u524D%u8DEF%u5F84%0A%20%0AgetPath%28sx%2Csy%2Ctx%2Cty%2Ccdir%2Cctime%2Cpath%29%3Aarray%0A%7B%0A%20%20item%2Cttxtty%2Cout%20%3D%20getNext%28sx%2Cxy%2Cdir%29%0A%20%20if%20item%20%7E%3D%20nil%20and%20item%20%7E%3D%20target%20then%0A%20%20%20%20%20%0A%20%20%20%20%20getPath%28%29%0A%20%20else%0A%20%20%20%0A%20%20end%0A%7D%0A%20%0AgetNext%28sx%2Csy%2Cdir%29%3Aitem%2Ccx%2Cxy%2CisOut</text>
+        <size>14</size>
+        <text>%u5173%u4E8E</text>
       </controlProperties>
     </control>
   </controls>
