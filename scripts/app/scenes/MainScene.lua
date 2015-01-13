@@ -30,6 +30,7 @@ function MainScene:ctor()
 	self.itemPool = {}
 	self.openlist = {}
 	self.closelist = {}
+	self.linedisplay = display.newDrawNode():addTo(self)
 end
 
 function MainScene:onEnter()
@@ -66,6 +67,7 @@ function MainScene:onTouched(event)
 	if item == nil then
 		return
 	end
+	self.linedisplay:clear()
 	--如果已经选中了一个item就进行连接判断
 	if self.selectedItem then
 		if self.selectedItem ~= item then
@@ -78,6 +80,8 @@ function MainScene:onTouched(event)
 					self:recycle(item)
 					self.selectedItem = nil
 					self.selectedIcon:setVisible(false)
+					--self.linedisplay:drawSegment(CCPoint(sx*row,sy*row), CCPoint(tx*row,ty*row), 5, cc.c4f(255, 128, 0,128))
+					cc.drawLine(CCPoint(sx*row,sy*row), CCPoint(tx*row,ty*row), 5, cc.c4f(255, 128, 0,128))
 					return
 				end
 				local path = self:hasOneLink(sx,sy,tx,ty)
