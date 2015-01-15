@@ -6,18 +6,21 @@ function StartScene:ctor()
 	self.item0 = ui.newTTFLabelMenuItem({text = "标准模式", size = 30, align = ui.TEXT_ALIGN_CENTER, 
         x = display.cx, y = display.cy + 80, color = display.COLOR_GREEN,
          listener = function()
+         	app:setData("currentLv", 0)
             app:enterScene("MainScene",0)
         end})
 
 	self.item1 = ui.newTTFLabelMenuItem({text = "计时模式", size = 30, align = ui.TEXT_ALIGN_CENTER, 
         x = display.cx, y = display.cy + 40, color = display.COLOR_GREEN,
          listener = function()
+         	app:setData("currentLv", 1)
             app:enterScene("MainScene",1)
         end})
 
 	self.item2 = ui.newTTFLabelMenuItem({text = "无尽模式", size = 30, align = ui.TEXT_ALIGN_CENTER, 
         x = display.cx, y = display.cy, color = display.COLOR_GREEN,
          listener = function()
+         app:setData("currentLv", 2)
             app:enterScene("MainScene",2)
         end})
 

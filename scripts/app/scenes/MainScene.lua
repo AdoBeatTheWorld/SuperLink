@@ -6,6 +6,7 @@ local SpriteItem = import("app/views/SpriteItem")
 
 local  startX,startY = 50,50
 local row = 8
+local totalTime = 180
 local scheduler = import("framework.scheduler")
 
 MainScene._GrayFilter = {"GRAY",{0.2, 0.3, 0.5, 0.1}}
@@ -16,6 +17,7 @@ MainScene.LEFT = 3
 MainScene.UP = 4
 
 function MainScene:ctor()
+	self.resultView = app:createView("ResultView")
 	self.layer = display.newLayer():addTo(self)
     self.scorelb = ui.newTTFLabel({text = "Score : 0", size = 30, align = ui.TEXT_ALIGN_LEFT})
 			        :pos(display.width-150, display.height-40)
@@ -31,7 +33,14 @@ function MainScene:ctor()
 	self.itemPool = {}
 	self.openlist = {}
 	self.closelist = {}
+	self.score = 0
+	self.result = 0
 	self.linedisplay = display.newDrawNode():addTo(self)
+end
+
+function MainScene:switchView( value )
+	self.resultView:updateDisplay(self.result, self.score)
+	self.resultView:setVisible(value)
 end
 
 function MainScene:onEnter()
@@ -54,11 +63,23 @@ function MainScene:onEnter()
 		item0:setName(string.format("item%d", i+32))
 		item0:setPos(math.floor((i+31)%row),math.floor((i+31)/row))
 	end
-
+	self:switchView(false)
 	self:shuffle(self.items)
-
+	self.curtime = 0
 	self.layer:addNodeEventListener(cc.NODE_TOUCH_EVENT, handler(self, self.onTouched))
 	self.layer:setTouchEnabled(true)
+	scheduler.scheduleGlobal(handler(self, self.onEnterFrame), 1.0)
+end
+
+function MainScene:onEnterFrame( dt )
+	self.curtime = self.curtime + dt
+	if self.curtime >= totalTime then
+		self.result = 0
+		--scheduler.unscheduleGlobal(handler(self, self.onEnterFrame))
+		self:switchView(true)
+	else
+		self.timelb:setString(string.format("Time : %d", totalTime-self.curtime)) 
+	end
 end
 
 function MainScene:onTouched(event)
@@ -83,6 +104,8 @@ function MainScene:onTouched(event)
 					self.selectedIcon:setVisible(false)
 					self.linedisplay:drawSegment(CCPoint((sx+1)*50,(sy+1)*50), CCPoint((tx+1)*50,(1+ty)*50), 8, cc.c4f(0, 1, 0,1))
 					scheduler.performWithDelayGlobal(handler(self,self.clearLines), 0.5)
+					self.score = self.score + 10
+					self.scorelb:setString(string.format("Score : %d", self.score))
 					return
 				end
 				local path = self:hasOneLink(sx,sy,tx,ty)
@@ -94,6 +117,8 @@ function MainScene:onTouched(event)
 					self.linedisplay:drawSegment(CCPoint((path[1]+1)*50,(path[2]+1)*50), CCPoint((path[3]+1)*50,(path[4]+1)*50), 5, cc.c4f(0, 1, 0,1))
 					self.linedisplay:drawSegment(CCPoint((path[3]+1)*50,(path[4]+1)*50), CCPoint((path[5]+1)*50,(path[6]+1)*50), 5, cc.c4f(0, 1, 0,1))
 					scheduler.performWithDelayGlobal(handler(self,self.clearLines), 0.5)
+					self.score = self.score + 10
+					self.scorelb:setString(string.format("Score : %d", self.score))
 					return
 				end
 
@@ -107,6 +132,8 @@ function MainScene:onTouched(event)
 					self.linedisplay:drawSegment(CCPoint((path[3]+1)*50,(path[4]+1)*50), CCPoint((path[5]+1)*50,(path[6]+1)*50), 5, cc.c4f(0, 1, 0,1))
 					self.linedisplay:drawSegment(CCPoint((path[5]+1)*50,(path[6]+1)*50), CCPoint((path[7]+1)*50,(path[8]+1)*50), 5, cc.c4f(0, 1, 0,1))
 					scheduler.performWithDelayGlobal(handler(self,self.clearLines), 0.5)
+					self.score = self.score + 10
+					self.scorelb:setString(string.format("Score : %d", self.score))
 					return
 				end
 			else
@@ -197,7 +224,7 @@ function MainScene:getPath(path, sx,sy,tx,ty,cdir,ct)
 	self.closelist[key] = true
 
 	if sx == tx and sy == ty then--found
-		printInfo("Finally Found")
+		--printInfo("Finally Found")
 		path[#path+1] = {sx,sy} 
 		return path
 	end
@@ -207,14 +234,14 @@ function MainScene:getPath(path, sx,sy,tx,ty,cdir,ct)
 	if next == nil then
 		for i=1,#MainScene._DIRECTIONS do
 			local tempdir = MainScene._DIRECTIONS[i]
-			printInfo("Sub loop current pos %d %d ,currrent dir:%d", sx,sy,tempdir)
+			--printInfo("Sub loop current pos %d %d ,currrent dir:%d", sx,sy,tempdir)
 			if tempdir == cdir then
-				printInfo("Current Pos:%d %d Keep Loop",sx,sy)
+				--printInfo("Current Pos:%d %d Keep Loop",sx,sy)
 				path[#path+1] = {sx,sy} 
 				temppath = self:getPath(path, sx, sy, tx, ty, tempdir, ct)
 			else
 				if ct <= 2 then
-					printInfo("Keep Loop and change dir:%d path length:%d",tempdir,#path)
+					--printInfo("Keep Loop and change dir:%d path length:%d",tempdir,#path)
 					path[#path+1] = {sx,sy} 
 					temppath = self:getPath(path, sx, sy, tx, ty, tempdir, ct+1)
 				end
@@ -500,6 +527,20 @@ function MainScene:recycle( item )
 	local itemindex = rx+ry*row+1
 	item:removeSelf()
 	self.items[itemindex] = nil
+	local result = true
+	for i=1,#self.items do
+		if self.items[i] ~= nil then
+			result = false
+			break
+		end
+	end
+	
+	print("Remove:",itemindex)
+	if result then
+		self.result = 1
+		--scheduler.unscheduleGlobal(handler(self, self.onEnterFrame))
+		self:switchView(true)
+	end
 end
 
 function MainScene:clearLines()
@@ -507,6 +548,7 @@ function MainScene:clearLines()
 end
 
 function MainScene:onExit()
+
 end
 
 return MainScene
