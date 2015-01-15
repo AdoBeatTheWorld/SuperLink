@@ -6,6 +6,7 @@ local SpriteItem = import("app/views/SpriteItem")
 
 local  startX,startY = 50,50
 local row = 8
+local scheduler = import("framework.scheduler")
 
 MainScene._GrayFilter = {"GRAY",{0.2, 0.3, 0.5, 0.1}}
 MainScene._DIRECTIONS = {1,2,3,4}
@@ -80,8 +81,8 @@ function MainScene:onTouched(event)
 					self:recycle(item)
 					self.selectedItem = nil
 					self.selectedIcon:setVisible(false)
-					--self.linedisplay:drawSegment(CCPoint(sx*row,sy*row), CCPoint(tx*row,ty*row), 5, cc.c4f(255, 128, 0,128))
-					cc.drawLine(CCPoint(sx*row,sy*row), CCPoint(tx*row,ty*row), 5, cc.c4f(255, 128, 0,128))
+					self.linedisplay:drawSegment(CCPoint((sx+1)*50,(sy+1)*50), CCPoint((tx+1)*50,(1+ty)*50), 8, cc.c4f(0, 1, 0,1))
+					scheduler.performWithDelayGlobal(handler(self,self.clearLines), 0.5)
 					return
 				end
 				local path = self:hasOneLink(sx,sy,tx,ty)
@@ -90,6 +91,9 @@ function MainScene:onTouched(event)
 					self:recycle(item)
 					self.selectedItem = nil
 					self.selectedIcon:setVisible(false)
+					self.linedisplay:drawSegment(CCPoint((path[1]+1)*50,(path[2]+1)*50), CCPoint((path[3]+1)*50,(path[4]+1)*50), 5, cc.c4f(0, 1, 0,1))
+					self.linedisplay:drawSegment(CCPoint((path[3]+1)*50,(path[4]+1)*50), CCPoint((path[5]+1)*50,(path[6]+1)*50), 5, cc.c4f(0, 1, 0,1))
+					scheduler.performWithDelayGlobal(handler(self,self.clearLines), 0.5)
 					return
 				end
 
@@ -99,6 +103,10 @@ function MainScene:onTouched(event)
 					self:recycle(item)
 					self.selectedItem = nil
 					self.selectedIcon:setVisible(false)
+					self.linedisplay:drawSegment(CCPoint((path[1]+1)*50,(path[2]+1)*50), CCPoint((path[3]+1)*50,(path[4]+1)*50), 5, cc.c4f(0, 1, 0,1))
+					self.linedisplay:drawSegment(CCPoint((path[3]+1)*50,(path[4]+1)*50), CCPoint((path[5]+1)*50,(path[6]+1)*50), 5, cc.c4f(0, 1, 0,1))
+					self.linedisplay:drawSegment(CCPoint((path[5]+1)*50,(path[6]+1)*50), CCPoint((path[7]+1)*50,(path[8]+1)*50), 5, cc.c4f(0, 1, 0,1))
+					scheduler.performWithDelayGlobal(handler(self,self.clearLines), 0.5)
 					return
 				end
 			else
@@ -228,7 +236,7 @@ end
 
 function MainScene:checkHasDirectLink( sx,sy,tx,ty)
 	--items on same line can link this way
-	print("Check Direct Link: ",sx,sy,tx,ty)
+	--print("Check Direct Link: ",sx,sy,tx,ty)
 	if sx == tx then
 		for i=sy,ty, sy > ty and -1 or 1 do
 			if i ~= sy and i ~= ty then
@@ -257,7 +265,7 @@ end
 
 function MainScene:hasOneLink( sx,sy,tx,ty )
 	--items on the same line cannot link this way
-	print("Check One Link")
+	--print("Check One Link")
 	if sx == tx or sy == ty then
 		return nil
 	end
@@ -289,14 +297,14 @@ function MainScene:hasOneLink( sx,sy,tx,ty )
 	
 
 	if firstfail == false then
-		print("Has one link 1:",sx,sy,sx,ty,tx,ty)
+		--print("Has one link 1:",sx,sy,sx,ty,tx,ty)
 		return {sx,sy,sx,ty,tx,ty}
 	end
 	
 
 	for l=sy,ty,sy < ty and 1 or -1 do--{tx,sy} to {tx,ty}
 		if l ~= ty then
-			print("One Link Check",tx,l)
+			--print("One Link Check",tx,l)
 			next = self:getItemByPos(tx,l)
 			if next ~= nil then
 				return nil
@@ -306,19 +314,19 @@ function MainScene:hasOneLink( sx,sy,tx,ty )
 
 	for m=tx,sx,sx < tx and -1 or 1 do--{tx,sy} to {sx,sy}
 		if m ~= sx then
-			print("One Link Check",m,sy)
+			--print("One Link Check",m,sy)
 			next = self:getItemByPos(m,sy)
 			if next ~= nil then
 				return nil
 			end
 		end
 	end
-	print("Has one link 2:",sx,sy,tx,sy,tx,ty)
+	--print("Has one link 2:",sx,sy,tx,sy,tx,ty)
 	return {sx,sy,tx,sy,tx,ty}
 end
 
 function MainScene:hasTwoLink( sx,sy,tx,ty )
-	print("Check Two Link")
+	--print("Check Two Link")
 	local linkToSource = self:getDirectPoints(sx, sy)
 	local linkToTarget = self:getDirectPoints(tx, ty)
 	local len0 = #linkToSource
@@ -329,7 +337,7 @@ function MainScene:hasTwoLink( sx,sy,tx,ty )
 			local item1 = linkToTarget[j]
 			local result = self:checkHasDirectLink(item0[1],item0[2],item1[1],item1[2])
 			if result then
-				print("2 Link Found:",sx,sy,item0[1],item0[2],item1[1],item1[2],tx,ty)
+				--print("2 Link Found:",sx,sy,item0[1],item0[2],item1[1],item1[2],tx,ty)
 				return {sx,sy,item0[1],item0[2],item1[1],item1[2],tx,ty}
 			end
 		end
@@ -351,15 +359,15 @@ function MainScene:getDirectPoints( sx,sy )
 	local downlimit = xdownlimit < ydownlimit and xdownlimit or ydownlimit
 	local next
 	local idx = 0
-	print("Check Link Points:",sx,sy,downlimit,uplimit)
+	--print("Check Link Points:",sx,sy,downlimit,uplimit)
 	for i=1,downlimit > uplimit and downlimit or uplimit do
 		if canXUP and sx + i <= row then
-			print("Check X Up:",sx+i,sy)
+			--print("Check X Up:",sx+i,sy)
 			next = self:getItemByPos(sx+i,sy)
 			if next == nil then
 				idx = idx + 1
 				result[idx] = {sx+i,sy}
-				print("Put:",sx+i,sy)
+				--print("Put:",sx+i,sy)
 			else
 				canXUP = false
 			end
@@ -369,7 +377,7 @@ function MainScene:getDirectPoints( sx,sy )
 		end
 
 		if canYUp and sy+i <= row then
-			print("Check Y Up:",sx,sy+i)
+			--print("Check Y Up:",sx,sy+i)
 			next = self:getItemByPos(sx,sy+i)
 			if next == nil then
 				idx = idx + 1
@@ -383,12 +391,12 @@ function MainScene:getDirectPoints( sx,sy )
 		end
 
 		if canXDown and sx-i >= -1 then
-			print("Check X Down:",sx-i,sy)
+			--print("Check X Down:",sx-i,sy)
 			next = self:getItemByPos(sx-i,sy)
 			if next == nil then
 				idx = idx + 1
 				result[idx] = {sx-i,sy}
-				print("Put:",sx-i,sy)
+				--print("Put:",sx-i,sy)
 			else
 				canXDown = false
 			end
@@ -397,12 +405,12 @@ function MainScene:getDirectPoints( sx,sy )
 		end
 
 		if canYDown and sy-i >= -1 then
-			print("Check Y Down:",sx,sy-i)
+			--print("Check Y Down:",sx,sy-i)
 			next = self:getItemByPos(sx,sy-i)
 			if next == nil then
 				idx = idx + 1
 				result[idx] = {sx,sy-i}
-				print("Put:",sx,sy-i)
+				--print("Put:",sx,sy-i)
 			else
 				canYDown = false
 			end
@@ -492,6 +500,10 @@ function MainScene:recycle( item )
 	local itemindex = rx+ry*row+1
 	item:removeSelf()
 	self.items[itemindex] = nil
+end
+
+function MainScene:clearLines()
+	self.linedisplay:clear()
 end
 
 function MainScene:onExit()
