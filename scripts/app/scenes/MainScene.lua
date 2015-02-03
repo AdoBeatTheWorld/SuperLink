@@ -26,8 +26,9 @@ function MainScene:ctor()
     self.timelb = ui.newTTFLabel({text = "Time  : 0", size = 30, align = ui.TEXT_ALIGN_LEFT})
 				    :pos(display.width-150, display.height-80)
 				    :addTo(self.layer)
-
+	self.bg = display.newSprite("res/bg.jpg", display.cx, display.cy, params):addTo(self)    
 	self.selectedIcon = display.newSprite("res/selected.png"):addTo(self.layer)
+
 	self.selectedIcon:setVisible(false)
 	self.items = {}
 	self.itemPool = {}
