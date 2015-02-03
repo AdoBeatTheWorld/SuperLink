@@ -17,7 +17,7 @@ MainScene.LEFT = 3
 MainScene.UP = 4
 
 function MainScene:ctor()
-	self.resultView = app:createView("ResultView")
+	self.bg = display.newSprite("res/bg.jpg", display.cx, display.cy, params):addTo(self)
 	self.layer = display.newLayer():addTo(self)
     self.scorelb = ui.newTTFLabel({text = "Score : 0", size = 30, align = ui.TEXT_ALIGN_LEFT})
 			        :pos(display.width-150, display.height-40)
@@ -26,7 +26,6 @@ function MainScene:ctor()
     self.timelb = ui.newTTFLabel({text = "Time  : 0", size = 30, align = ui.TEXT_ALIGN_LEFT})
 				    :pos(display.width-150, display.height-80)
 				    :addTo(self.layer)
-	self.bg = display.newSprite("res/bg.jpg", display.cx, display.cy, params):addTo(self)    
 	self.selectedIcon = display.newSprite("res/selected.png"):addTo(self.layer)
 
 	self.selectedIcon:setVisible(false)
@@ -37,10 +36,10 @@ function MainScene:ctor()
 	self.score = 0
 	self.result = 0
 	self.linedisplay = display.newDrawNode():addTo(self)
+	self.resultView = app:createView("ResultView"):addTo(self)
 end
 
 function MainScene:switchView( value )
-	print(type(self.resultView))
 	self.resultView:updateDisplay(self.result, self.score)
 	self.resultView:setVisible(value)
 end
@@ -386,7 +385,7 @@ function MainScene:getDirectPoints( sx,sy )
 			if next == nil then
 				idx = idx + 1
 				result[idx] = {sx,sy+i}
-				print("Put:",sx,sy+i)
+				--print("Put:",sx,sy+i)
 			else
 				canYUp = false
 			end
@@ -511,6 +510,7 @@ function MainScene:recycle( item )
 		self.result = 1
 		if self.beat ~= nil then
 			scheduler.unscheduleGlobal(self.beat)
+			self.beat = nil
 		end
 		self:switchView(true)
 	end
