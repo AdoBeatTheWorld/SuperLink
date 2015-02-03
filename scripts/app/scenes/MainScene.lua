@@ -8,7 +8,7 @@ local  startX,startY = 50,50
 local row = 8
 local totalTime = 180
 local scheduler = import("framework.scheduler")
-
+local totalCnt = 0
 MainScene._GrayFilter = {"GRAY",{0.2, 0.3, 0.5, 0.1}}
 MainScene._DIRECTIONS = {1,2,3,4}
 MainScene.RIGHT = 1
@@ -39,6 +39,7 @@ function MainScene:ctor()
 end
 
 function MainScene:switchView( value )
+	print(type(self.resultView))
 	self.resultView:updateDisplay(self.result, self.score)
 	self.resultView:setVisible(value)
 end
@@ -63,12 +64,13 @@ function MainScene:onEnter()
 		item0:setName(string.format("item%d", i+32))
 		item0:setPos(math.floor((i+31)%row),math.floor((i+31)/row))
 	end
+	totalCnt = 64
 	self:switchView(false)
 	self:shuffle(self.items)
 	self.curtime = 0
 	self.layer:addNodeEventListener(cc.NODE_TOUCH_EVENT, handler(self, self.onTouched))
 	self.layer:setTouchEnabled(true)
-	scheduler.scheduleGlobal(handler(self, self.onEnterFrame), 1.0)
+	self.beat = scheduler.scheduleGlobal(handler(self, self.onEnterFrame), 1.0)
 end
 
 function MainScene:onEnterFrame( dt )
@@ -141,32 +143,6 @@ function MainScene:onTouched(event)
 				self.selectedIcon:setVisible(true)
 				self.selectedIcon:setPosition(item:getPositionX()-1, item:getPositionY()-1)
 			end
-			
-			--[[
-			self.openlist = {}
-			self.closelist = {}
-			self.openlist[string.format("%d_%d", sx,sy)] = true
-			printf("get path %d %d ===> %d %d", sx,sy,tx,ty)
-			for i=1,#MainScene._DIRECTIONS do
-				local path = {{sx,sy}}
-				printInfo("Main Loop dir:%d", MainScene._DIRECTIONS[i])
-				path = self:getPath(path, sx, sy, tx, ty, MainScene._DIRECTIONS[i], 0)
-				if path ~= nil then
-					print("Path found")
-					for i=1,#path do
-						printInfo("Path Node x:%d y:%d",path[i][1],path[i][2])
-					end
-					self.selectedItem = nil
-					item = nil
-					return
-				end
-			end
-			
-			if path == nil then
-				self.selectedItem = item
-				self.selectedIcon:setPosition(item:getPosition())
-			end
-			]]
 		else
 			self.selectedItem = nil
 			self.selectedIcon:setVisible(false)
@@ -518,6 +494,7 @@ function MainScene:shuffle(t)
 end
 
 function MainScene:recycle( item )
+	totalCnt = totalCnt - 1
 	if #self.itemPool == 0 then
 		self.itemPool[1] = item
 	else
@@ -527,18 +504,13 @@ function MainScene:recycle( item )
 	local itemindex = rx+ry*row+1
 	item:removeSelf()
 	self.items[itemindex] = nil
-	local result = true
-	for i=1,#self.items do
-		if self.items[i] ~= nil then
-			result = false
-			break
-		end
-	end
 	
-	print("Remove:",itemindex)
-	if result then
+	--print("Remove:",itemindex)
+	if totalCnt <= 0 then
 		self.result = 1
-		--scheduler.unscheduleGlobal(handler(self, self.onEnterFrame))
+		if self.beat ~= nil then
+			scheduler.unscheduleGlobal(self.beat)
+		end
 		self:switchView(true)
 	end
 end

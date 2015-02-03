@@ -19,36 +19,71 @@ lua_loadChunksFromZIP() - loaded chunks count: 108
 ------------------------------------------------
 LOAD LUA FILE: E:/sublime_workspace/SuperLink/scripts/main.lua
 ------------------------------------------------
-[0.2273] [INFO] 
-[0.2279] [INFO] # DEBUG                        = 1
-[0.2285] [INFO] #
-[0.2292] [INFO] # device.platform              = windows
-[0.2304] [INFO] # device.model                 = unknown
-[0.2310] [INFO] # device.language              = cn
-[0.2317] [INFO] # device.writablePath          = E:\sublime_workspace\SuperLink\
-[0.2328] [INFO] # device.cachePath             = E:\sublime_workspace\SuperLink\
-[0.2338] [INFO] # device.directorySeparator    = \
-[0.2346] [INFO] # device.pathSeparator         = ;
-[0.2350] [INFO] #
-[0.2378] [INFO] # CONFIG_SCREEN_AUTOSCALE      = FIXED_WIDTH
-[0.2385] [INFO] # CONFIG_SCREEN_WIDTH          = 640.00
-[0.2391] [INFO] # CONFIG_SCREEN_HEIGHT         = 426.67
-[0.2399] [INFO] # display.widthInPixels        = 960.00
-[0.2406] [INFO] # display.heightInPixels       = 640.00
-[0.2414] [INFO] # display.contentScaleFactor   = 1.50
-[0.2420] [INFO] # display.width                = 640.00
-[0.2426] [INFO] # display.height               = 426.67
-[0.2434] [INFO] # display.cx                   = 320.00
-[0.2443] [INFO] # display.cy                   = 213.33
-[0.2451] [INFO] # display.left                 = 0.00
-[0.2462] [INFO] # display.right                = 640.00
-[0.2470] [INFO] # display.top                  = 426.67
-[0.2479] [INFO] # display.bottom               = 0.00
-[0.2485] [INFO] # display.c_left               = -320.00
-[0.2491] [INFO] # display.c_right              = 320.00
-[0.2498] [INFO] # display.c_top                = 213.33
-[0.2506] [INFO] # display.c_bottom             = -213.33
-[0.2511] [INFO] #
-[0.2722] [INFO] Set Data 0
-[0.2728] [INFO] res/0.png
-[0.2744] [INFO] x:80,y:80
+[0.2313] [INFO] 
+[0.2318] [INFO] # DEBUG                        = 1
+[0.2326] [INFO] #
+[0.2333] [INFO] # device.platform              = windows
+[0.2339] [INFO] # device.model                 = unknown
+[0.2345] [INFO] # device.language              = cn
+[0.2352] [INFO] # device.writablePath          = E:\sublime_workspace\SuperLink\
+[0.2361] [INFO] # device.cachePath             = E:\sublime_workspace\SuperLink\
+[0.2371] [INFO] # device.directorySeparator    = \
+[0.2377] [INFO] # device.pathSeparator         = ;
+[0.2382] [INFO] #
+[0.2406] [INFO] # CONFIG_SCREEN_AUTOSCALE      = FIXED_WIDTH
+[0.2412] [INFO] # CONFIG_SCREEN_WIDTH          = 640.00
+[0.2419] [INFO] # CONFIG_SCREEN_HEIGHT         = 426.67
+[0.2425] [INFO] # display.widthInPixels        = 960.00
+[0.2432] [INFO] # display.heightInPixels       = 640.00
+[0.2438] [INFO] # display.contentScaleFactor   = 1.50
+[0.2444] [INFO] # display.width                = 640.00
+[0.2450] [INFO] # display.height               = 426.67
+[0.2455] [INFO] # display.cx                   = 320.00
+[0.2461] [INFO] # display.cy                   = 213.33
+[0.2467] [INFO] # display.left                 = 0.00
+[0.2473] [INFO] # display.right                = 640.00
+[0.2480] [INFO] # display.top                  = 426.67
+[0.2487] [INFO] # display.bottom               = 0.00
+[0.2492] [INFO] # display.c_left               = -320.00
+[0.2497] [INFO] # display.c_right              = 320.00
+[0.2503] [INFO] # display.c_top                = 213.33
+[0.2509] [INFO] # display.c_bottom             = -213.33
+[0.2514] [INFO] #
+[1.0434] Ctor of ResultView
+[1.0794] userdata
+[15.1140] Put:  5  1
+[15.1171] Put:  5  2
+[15.1192] Put:  5  3
+[15.1209] Put:  5  4
+[15.1225] Put:  5  5
+[15.1239] Put:  5  6
+[15.1264] Put:  5  7
+[15.1281] Put:  5  8
+[24.5134] Put:  0  8
+[33.5018] Put:  3  4
+[33.5045] Put:  3  5
+[33.5062] Put:  3  6
+[33.5081] Put:  3  7
+[33.5097] Put:  3  8
+[33.5111] Put:  1  4
+[33.5125] Put:  1  5
+[33.5139] Put:  1  6
+[35.6989] Put:  4  8
+[40.3600] Put:  4  4
+[41.5191] Put:  4  3
+[41.5215] Put:  4  4
+[42.8942] Put:  7  4
+[42.8963] Put:  1  8
+[44.0523] Put:  2  7
+[44.0545] Put:  2  8
+[44.0562] Put:  6  6
+[48.4544] userdata
+[48.4565] ----------------------------------------
+[48.4581] LUA ERROR: [string "E:/sublime_workspace/SuperLink/scripts/app/scenes/MainScene.lua"]:43: attempt to call method 'updateDisplay' (a nil value)
+
+[48.4620] 
+stack traceback:
+	[string "E:/sublime_workspace/SuperLink/scripts/app/scenes/MainScene.lua"]:43: in function 'switchView'
+	[string "E:/sublime_workspace/SuperLink/scripts/app/scenes/MainScene.lua"]:514: in function 'recycle'
+	[string "E:/sublime_workspace/SuperLink/scripts/app/scenes/MainScene.lua"]:116: in function <[string "E:/sublime_workspace/SuperLink/scripts/app/scenes/MainScene.lua"]:87>
+[48.4706] ----------------------------------------
